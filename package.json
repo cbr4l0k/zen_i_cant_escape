@@ -1,0 +1,25 @@
+{
+    "name": "i_cant_scape",
+    "module": "index.ts",
+    "type": "module",
+    "private": true,
+    "devDependencies": {
+        "@types/bun": "latest",
+        "@types/react": "^19.2.7",
+        "react-devtools-core": "^7.0.1",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "ink": "^6.6.0",
+        "react": "^19.2.3"
+    },
+    "scripts": {
+        "dev": "bun run src/cli.tsx",
+        "start": "bun run src/cli.tsx",
+        "build": "bun build src/cli.tsx --outdir dist/cli.js",
+        "compile": "bun build --compile src/cli.tsx --outfile ice/ice"
+    },
+    "bin": {
+        "ice": "dist/cli.js"
+    }
+}
