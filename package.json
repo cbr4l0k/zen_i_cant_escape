@@ -17,9 +17,9 @@
         "dev": "bun run src/cli.tsx",
         "start": "bun run src/cli.tsx",
         "build": "bun build src/cli.tsx --outdir dist/cli.js",
-        "compile": "bun build --compile src/cli.tsx --outfile ice/ice"
+        "compile": "bun build --compile src/cli.tsx --outfile zice/zice"
     },
     "bin": {
-        "ice": "dist/cli.js"
+        "zice": "dist/cli.js"
     }
 }
