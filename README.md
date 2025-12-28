@@ -19,3 +19,23 @@ of brown switches, and now is not working).
 export ZEN_CONFIG_PATH="..."
 ```
 
+## Usage
+
+```bash
+# Install dependencies
+bun install
+
+# Run the tool
+bun run start
+
+# Or use dev mode
+bun run dev
+```
+
+### Build a standalone binary
+
+```bash
+bun run compile
+./zice/zice
+```
+
