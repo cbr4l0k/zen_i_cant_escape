@@ -1,4 +1,6 @@
-# Zen, I can't `ESC`ape (`zice`)
+<img src="./assets/logo.png" style="width:700px">
+
+> Zen, I can't `ESC`ape (`zice`)
 > `zice` actually matter 
 
 
