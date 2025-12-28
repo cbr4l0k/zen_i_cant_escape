@@ -40,7 +40,7 @@ export function App() {
         const groups = groupShortcuts(data);
         const sorted: Shortcut[] = [];
         for (const group of Object.keys(groups).sort()) {
-          sorted.push(...groups[group]);
+          sorted.push(...groups[group]!);
         }
         setShortcuts(sorted);
         setLoading(false);
@@ -54,7 +54,7 @@ export function App() {
   // Check for conflicts when editing
   useEffect(() => {
     if (mode === "edit" && shortcuts.length > 0) {
-      const current = shortcuts[selectedIndex];
+      const current = shortcuts[selectedIndex]!;
       const conflict = findConflict(current, shortcuts, selectedIndex);
       setConflictWith(conflict);
     }
@@ -82,7 +82,10 @@ export function App() {
     (index: number, updates: Partial<Shortcut>) => {
       setShortcuts((prev) => {
         const newShortcuts = [...prev];
-        newShortcuts[index] = { ...newShortcuts[index], ...updates };
+        const existing = newShortcuts[index];
+        if (existing) {
+          newShortcuts[index] = { ...existing, ...updates };
+        }
         return newShortcuts;
       });
       setHasUnsavedChanges(true);
@@ -93,6 +96,7 @@ export function App() {
   const toggleModifier = useCallback(
     (modifier: ModifierKey) => {
       const current = shortcuts[selectedIndex];
+      if (!current) return;
       const newModifiers: Modifiers = {
         ...current.modifiers,
         [modifier]: !current.modifiers[modifier],
@@ -104,13 +108,22 @@ export function App() {
 
   const toggleDisabled = useCallback(() => {
     const current = shortcuts[selectedIndex];
+    if (!current) return;
     updateShortcut(selectedIndex, { disabled: !current.disabled });
   }, [shortcuts, selectedIndex, updateShortcut]);
 
   const setKey = useCallback(
     (key: string) => {
       setKeyInput(key);
-      updateShortcut(selectedIndex, { key: key || null });
+      updateShortcut(selectedIndex, { key: key || null, keycode: null });
+    },
+    [selectedIndex, updateShortcut]
+  );
+
+  const setKeycode = useCallback(
+    (keycode: string) => {
+      setKeyInput(keycode);
+      updateShortcut(selectedIndex, { key: null, keycode });
     },
     [selectedIndex, updateShortcut]
   );
@@ -124,7 +137,7 @@ export function App() {
 
     if (mode === "list") {
       // List mode controls
-      if (input === "q" || key.escape) {
+      if (input === "q") {
         if (hasUnsavedChanges) {
           setStatusMessage("Unsaved changes! Press Ctrl+S to save or q again to quit");
           if (statusMessage?.includes("again")) {
@@ -136,19 +149,21 @@ export function App() {
         return;
       }
 
-      if (key.upArrow) {
+      // Navigation with arrows or vim keys (j/k)
+      if (key.upArrow || input === "k") {
         setSelectedIndex((i) => Math.max(0, i - 1));
         return;
       }
 
-      if (key.downArrow) {
+      if (key.downArrow || input === "j") {
         setSelectedIndex((i) => Math.min(shortcuts.length - 1, i + 1));
         return;
       }
 
       if (key.return) {
         const current = shortcuts[selectedIndex];
-        setKeyInput(current.key || "");
+        if (!current) return;
+        setKeyInput(current.key || current.keycode || "");
         setEditField("key");
         setMode("edit");
         return;
@@ -165,24 +180,17 @@ export function App() {
         return;
       }
     } else if (mode === "edit") {
-      // Edit mode controls
-      if (key.escape) {
+      // Edit mode controls - use 'b' for back (ESC key is broken!)
+      if (input === "b" && editField !== "key") {
         setMode("list");
         return;
       }
 
-      // Tab or arrow keys to navigate fields
-      if (key.tab || key.rightArrow) {
+      // Tab to navigate fields (arrows reserved for setting special keys)
+      if (key.tab) {
         const currentIdx = EDIT_FIELDS.indexOf(editField);
         const nextIdx = (currentIdx + 1) % EDIT_FIELDS.length;
-        setEditField(EDIT_FIELDS[nextIdx]);
-        return;
-      }
-
-      if (key.leftArrow) {
-        const currentIdx = EDIT_FIELDS.indexOf(editField);
-        const prevIdx = (currentIdx - 1 + EDIT_FIELDS.length) % EDIT_FIELDS.length;
-        setEditField(EDIT_FIELDS[prevIdx]);
+        setEditField(EDIT_FIELDS[nextIdx]!);
         return;
       }
 
@@ -201,7 +209,37 @@ export function App() {
       // Type key character when on key field
       if (editField === "key") {
         if (key.backspace || key.delete) {
-          setKey(keyInput.slice(0, -1));
+          setKey("");
+          return;
+        }
+
+        // Handle special keys as keycodes
+        if (key.upArrow) {
+          setKeycode("VK_UP");
+          return;
+        }
+        if (key.downArrow) {
+          setKeycode("VK_DOWN");
+          return;
+        }
+        if (key.leftArrow) {
+          setKeycode("VK_LEFT");
+          return;
+        }
+        if (key.rightArrow) {
+          setKeycode("VK_RIGHT");
+          return;
+        }
+        if (key.pageUp) {
+          setKeycode("VK_PAGE_UP");
+          return;
+        }
+        if (key.pageDown) {
+          setKeycode("VK_PAGE_DOWN");
+          return;
+        }
+        if (key.return) {
+          setKeycode("VK_RETURN");
           return;
         }
 

@@ -19,8 +19,8 @@ export function StatusBar({
 }: StatusBarProps) {
   const helpText =
     mode === "list"
-      ? "↑↓: Navigate | Enter: Edit | Ctrl+S: Save | q: Quit"
-      : "Tab/←→: Fields | Space: Toggle | Type: Set key | Esc: Close";
+      ? "↑↓/jk: Navigate | Enter: Edit | Ctrl+S: Save | q: Quit | "
+      : "Tab: Fields | Space: Toggle | Type/Arrows: Set key | b: Back";
 
   return (
     <Box flexDirection="column" borderStyle="single" borderColor="gray">

@@ -28,7 +28,7 @@ export function ShortcutList({ shortcuts, selectedIndex, viewportHeight }: Short
 
     for (const group of sortedGroups) {
       items.push({ type: "header", group });
-      for (const shortcut of groups[group]) {
+      for (const shortcut of groups[group]!) {
         items.push({
           type: "shortcut",
           shortcut,

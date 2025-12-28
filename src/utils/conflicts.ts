@@ -33,7 +33,7 @@ export function findConflict(
   for (let i = 0; i < allShortcuts.length; i++) {
     if (i === excludeIndex) continue;
 
-    const other = allShortcuts[i];
+    const other = allShortcuts[i]!;
 
     // Skip disabled shortcuts - they don't cause conflicts
     if (other.disabled) continue;

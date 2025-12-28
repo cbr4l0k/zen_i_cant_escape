@@ -81,7 +81,7 @@ export function ShortcutEditor({
 
       <Box marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
         <Text dimColor>
-          Tab/Arrows: Navigate fields | Space: Toggle | Esc: Close editor
+          Tab: Navigate fields | Space: Toggle | Arrows: Set special keys | b: Back
         </Text>
       </Box>
     </Box>
